@@ -16,16 +16,13 @@ const router = createRouter({
   routes,
 });
 
-// 🔐 Navigation Guard
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem("token");
 
-  // Jika sudah login dan buka login
   if (token && (to.path === "/" || to.path === "/login")) {
     return next("/products");
   }
 
-  // Jika belum login dan buka page selain login
   if (!token && to.path !== "/" && to.path !== "/login") {
     return next("/");
   }
