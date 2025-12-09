@@ -1,0 +1,45 @@
+version: "3.9"
+
+services:
+  db:
+    image: mysql:8
+    container_name: mysql-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: simple_orders_app
+      MYSQL_USER: istana
+      MYSQL_PASSWORD: istana123
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+
+  backend:
+    build: ./backend
+    container_name: est-backend
+    restart: always
+    environment:
+      DB_HOST: db
+      DB_USER: istana
+      DB_PASS: istana123
+      DB_NAME: simple_orders_app
+      DB_PORT: 3306
+      JWT_SECRET: secret
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+
+  frontend:
+    build: ./frontend
+    container_name: est-frontend
+    restart: always
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+
+volumes:
+  db_data:
